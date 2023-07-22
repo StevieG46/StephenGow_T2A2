@@ -27,4 +27,3 @@ def auth_register():
             return {'error': 'Email address already in use'}, 409
         if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
             return {'error': f'The{err.orig.diag.column_name} is required'},409
-        

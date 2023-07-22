@@ -1,18 +1,18 @@
 from init import db, ma
-from marshamallow import fields
+from marshmallow import fields
 
 class Review(db.Model):
     __tablename__ = 'reviews'
 
-    id = db.Column(db.Integer, priamry_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.Date)
     review = db.Column(db.Text, nullable=False)
-    rating = db.Coumn(db.Integer, nullable=False)
+    rating = db.Column(db.Integer, nullable=False)
     performance_id = db.Column(db.Integer, db.ForeignKey('performances'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users'), nullable=False)
 
     performance = db.relationship('Performance', back_populates='reviews')
-    user = db.relationship('User', bac_populates='reviews')
+    user = db.relationship('User', back_populates='reviews')
 
 class ReviewSchema(ma.Schema):
     performance = fields.Nested('PerformanceSchema', only=['title'])

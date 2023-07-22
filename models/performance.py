@@ -7,10 +7,10 @@ class Performance(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     company_id = db.Column(db.Integer, db.ForeignKey('companies.id'), nullable=False)
     title = db.Column(db.String(100), nullable=False)
-    date = db.Column(db.date)
+    date = db.Column(db.Date)
     artform = db.Column(db.String) # should i make this another table?
 
-    company = db.relationship('Company', back_populate='performances')
+    company = db.relationship('Company', back_populates='performances')
 
 class PerformanceSchema(ma.Schema):
     company = fields.Nested('CompanySchema', only=['name'])

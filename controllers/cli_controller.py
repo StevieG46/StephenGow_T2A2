@@ -3,6 +3,8 @@ from init import db, bcrypt
 from models.user import User
 from models.company import Company
 from models.performance import Performance
+from models.review import Review
+from models.comment import Comment
 from datetime import date
 
 db_commands = Blueprint('db', __name__)
@@ -55,13 +57,34 @@ def seed_db():
         Performance (
             company_id=companies[1],
             title='Lucie in the Sky',
-            date=16/07/2023,
+            date=16/7/2023,
             artform='Dance'
 
         )
     ]
     db.session.add_all(companies)
 
+    reviews = [
+        Review (
+            date=date.today(),
+            review='A great performance with integrated used of drones and dancers',
+            rating=4,
+            performance_id=performances[0],
+            user_id=users[1]
+        )
+
+    ]
+    db.sessions.add_all(reviews)
+
+    comments = [
+        Comment (
+            comment='The review above is very accurate',
+            date=date.today(),
+            user_id=users[0],
+            review_id=reviews[0]
+        )
+    ]
+    db.session.add_all(reviews)
 
     db.session.commit()
 
