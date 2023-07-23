@@ -18,7 +18,7 @@ class PerformanceSchema(ma.Schema):
     reviews = fields.Nested('ReviewSchema', only=['review', 'rating'])
     
     class Meta:
-        fields = ('id', 'company', 'title', 'date', 'artform',  'reviews')
+        fields = ('id', 'company_id', 'title', 'date', 'artform',  'reviews')
         ordered = True
 
 performance_schema = PerformanceSchema()

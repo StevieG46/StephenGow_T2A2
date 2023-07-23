@@ -15,7 +15,7 @@ class CompanySchema(ma.Schema):
     # performances = fields.Nested('PerformanceSchema', only=['title'])
 
     class Meta:
-        fields = ('id', 'name', 'location', 'artistic_director', 'performances')
+        fields = ('id', 'name', 'location', 'artistic_director') #'performances
 
 company_schema = CompanySchema()
 companies_schema = CompanySchema(many=True)
