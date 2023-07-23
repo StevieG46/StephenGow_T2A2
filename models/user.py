@@ -11,6 +11,9 @@ class User(db.Model):
     date_created = db.Column(db.Date)
     is_admin = db.Column(db.Boolean, default=False)
 
+    reviews = db.relationship('Review', back_populates='user')
+    comments = db.relationship('Comment', back_populates='user')
+
 class UserSchema(ma.Schema):
     class Meta:
         fields = ('id', 'username', 'password', 'email', 'date_created', 'is_admin')

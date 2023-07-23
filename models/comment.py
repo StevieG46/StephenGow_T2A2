@@ -11,14 +11,14 @@ class Comment(db.Model):
     review_id = db.Column(db.Integer, db.ForeignKey('reviews.id'), nullable=False)
 
     user = db.relationship('User', back_populates='comments')
-    review = db.relationship('Review', back_populates='comments')
+    reviews = db.relationship('Review', back_populates='comments')
 
 class CommentSchema(ma.Schema):
     user = fields.Nested('UserSchema', only=['username'])
-    review = fields.Nested('ReviewSchema', exclude=['comments'])
+    reviews = fields.Nested('ReviewSchema', exclude=['comments'])
 
     class Meta:
-        fields = ('id', 'comment', 'date', 'user', 'review')
+        fields = ('id', 'comment', 'date', 'user', 'reviews')
 
 comment_schema = CommentSchema()
 comments_schema = CommentSchema(many=True)

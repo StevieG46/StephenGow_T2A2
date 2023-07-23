@@ -16,7 +16,7 @@ def create_db():
 
 @db_commands.cli.command('drop')
 def drop_db():
-    db.drop.all()
+    db.drop_all()
     print("Tables dropped")
 
 @db_commands.cli.command('seed')
@@ -31,14 +31,14 @@ def seed_db():
         ),
         User (
             username='User1',
-            password=bcrypt.geneate_password_hash('user1').decode('utf-8'),
+            password=bcrypt.generate_password_hash('user1').decode('utf-8'),
             email='user1@mail.com',
             date_created=date.today(),
             is_admin=False
         )
     ]
 
-    db.sesion.add_all(users)
+    db.session.add_all(users)
 
     companies = [
         Company (
@@ -49,42 +49,42 @@ def seed_db():
         Company (
             name='ADC',
             location='QLD',
-            artiistic_director='Amy Hollingsworth'
-        )
-    ]
-
-    performances = [
-        Performance (
-            company_id=companies[1],
-            title='Lucie in the Sky',
-            date=16/7/2023,
-            artform='Dance'
-
+            artistic_director='Amy Hollingsworth'
         )
     ]
     db.session.add_all(companies)
+    
+    # performances = [
+    #     Performance (
+    #         company_id=(companies[1]),
+    #         title='Lucie in the Sky',
+    #         date=16/7/2023,
+    #         artform='Dance'
+    #     )
+    # ]
+    # db.session.add_all(performances)
 
-    reviews = [
-        Review (
-            date=date.today(),
-            review='A great performance with integrated used of drones and dancers',
-            rating=4,
-            performance_id=performances[0],
-            user_id=users[1]
-        )
+    # reviews = [
+    #     Review (
+    #         date=date.today(),
+    #         review='A great performance with integrated used of drones and dancers',
+    #         rating=4,
+    #         performance_id=performances[0],
+    #         user_id=users[1]
+    #     )
 
-    ]
-    db.sessions.add_all(reviews)
+    # ]
+    # db.session.add_all(reviews)
 
-    comments = [
-        Comment (
-            comment='The review above is very accurate',
-            date=date.today(),
-            user_id=users[0],
-            review_id=reviews[0]
-        )
-    ]
-    db.session.add_all(reviews)
+    # comments = [
+    #     Comment (
+    #         comment='The review above is very accurate',
+    #         date=date.today(),
+    #         user_id=users[0],
+    #         review_id=reviews[0]
+    #     )
+    # ]
+    # db.session.add_all(comments)
 
     db.session.commit()
 
