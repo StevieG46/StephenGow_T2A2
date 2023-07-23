@@ -9,10 +9,10 @@ class Company(db.Model):
     location = db.Column(db.String)
     artistic_director = db.Column(db.String)
 
-    performances = db.relationship('Performance', back_populates='company', cascade='all, delete')
+    # performances = db.relationship('Performance', back_populates='company.name', cascade='all, delete')
 
 class CompanySchema(ma.Schema):
-    performances = fields.Nested('PerformanceSchema', only=['title'])
+    # performances = fields.Nested('PerformanceSchema', only=['title'])
 
     class Meta:
         fields = ('id', 'name', 'location', 'artistic_director', 'performances')

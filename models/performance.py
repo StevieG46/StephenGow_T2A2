@@ -10,11 +10,11 @@ class Performance(db.Model):
     date = db.Column(db.Date)
     artform = db.Column(db.String) # should i make this another table?
 
-    company = db.relationship('Company', back_populates='performances')
+    # company = db.relationship('Company', back_populates='performances')
     reviews = db.relationship('Review', back_populates='performance', cascade='all, delete')
 
 class PerformanceSchema(ma.Schema):
-    company = fields.Nested('CompanySchema', only=['id'])
+    # company = fields.Nested('CompanySchema', only=['id'])
     reviews = fields.Nested('ReviewSchema', only=['review', 'rating'])
     
     class Meta:

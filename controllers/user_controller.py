@@ -1,7 +1,7 @@
 from flask import Blueprint, request
 from init import db, bcrypt, jwt
 from models.user import User, user_schema, users_schema
-from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
+from flask_jwt_extended import get_jwt_identity, jwt_required
 from sqlalchemy.exc import IntegrityError
 from psycopg2 import errorcodes
 from datetime import timedelta
