@@ -3,6 +3,7 @@ from init import db, bcrypt, jwt
 from models.review import Review, review_schema, reviews_schema
 from models.performance import Performance
 from models.user import User
+from .auth_controller import auth_as_admin
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from sqlalchemy.exc import IntegrityError
 from psycopg2 import errorcodes
@@ -30,7 +31,7 @@ def get_one_review(id):
 def create_review():
     body_data = request.get_json()
     review = Review(
-        date=body_data.get('date'),
+        # date=body_data.get('date'),
         review=body_data.get('review'),
         rating=body_data.get('rating'),
         performance_id=body_data.get('performance_id'),
@@ -41,22 +42,31 @@ def create_review():
 
     return review_schema.dump(review), 201
 
-@review_bp.route('/<int:id>', methods=["PUT"])
+@review_bp.route('/<int:id>', methods=["PATCH"])
 @jwt_required()
-@auth_as_admin
 def update_review(id):
+    # Get the authenticated user's ID from the JWT token
+    current_user_id = get_jwt_identity()
+
+    # Get the review from the database
     review = Review.query.get(id)
-    if review:
-        body_data = request.get_json()
-        review.date = body_data.get('date', review.date)
-        review.review = body_data.get('review', review.review)
-        review.rating = body_data.get('rating', review.rating)
-        review.performance_id = body_data.get('performance_id', review.performance_id)
-        review.user_id = body_data.get('user_id', review.user_id)
-        db.session.commit()
-        return review_schema.dump(review)
-    else:
+
+    # Check if the review exists
+    if not review:
         return {'error': f'Review with id {id} not found'}, 404
+
+    # Check if the authenticated user is the owner of the review
+    if review.user_id != current_user_id:
+        return {'error': 'You are not authorized to update this review'}, 403
+
+    # Update the review if the user is authorized
+    body_data = request.get_json()
+    review.date = body_data.get('date', review.date)
+    review.review = body_data.get('review', review.review)
+    review.rating = body_data.get('rating', review.rating)
+    db.session.commit()
+
+    return review_schema.dump(review)
 
 @review_bp.route('/<int:id>', methods=["DELETE"])
 @jwt_required()

@@ -11,7 +11,7 @@ class Review(db.Model):
     performance_id = db.Column(db.Integer, db.ForeignKey('performances.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
-    performance = db.relationship('Performance', back_populates='reviews')
+    performance = db.relationship('Performance', back_populates='reviews', lazy='joined')
     user = db.relationship('User', back_populates='reviews')
     comments = db.relationship('Comment', back_populates='reviews')
 

@@ -6,6 +6,7 @@ from controllers.auth_controller import auth_bp
 from controllers.user_controller import user_bp
 from controllers.company_controller import company_bp
 from controllers.performance_controller import performance_bp
+from controllers.review_controller import review_bp
 
 def create_app():
     app = Flask(__name__)
@@ -26,5 +27,6 @@ def create_app():
     app.register_blueprint(user_bp)
     app.register_blueprint(company_bp)
     app.register_blueprint(performance_bp)
+    app.register_blueprint(review_bp)
 
     return app

@@ -2,6 +2,7 @@ from flask import Blueprint, request
 from init import db, bcrypt, jwt
 from models.company import Company, company_schema, companies_schema
 from models.user import User
+from .auth_controller import auth_as_admin
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from sqlalchemy.exc import IntegrityError
 from psycopg2 import errorcodes
@@ -9,19 +10,7 @@ from datetime import timedelta
 import functools
 
 company_bp = Blueprint('companies', __name__, url_prefix='/companies')
-
-def auth_as_admin(fn):
-    @functools.wraps(fn)
-    def wrapper(*args, **kwargs):
-        user_id = get_jwt_identity()
-        stmt = db.select(User).filter_by(id=user_id)
-        user = db.session.scalar(stmt)
-        if user.is_admin:
-            return fn(*args, **kwargs)
-        else:
-            return {'error': 'Not authorised to peform this delete'}, 403
-    return wrapper
-        
+ 
 @company_bp.route('/', methods=["GET"])
 def get_all_companies():
     stmt = db.select(Company).order_by(Company.id)

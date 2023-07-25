@@ -1,6 +1,7 @@
 from flask import Blueprint, request
 from init import db, bcrypt, jwt
 from models.user import User, user_schema, users_schema
+from .auth_controller import auth_as_admin
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from sqlalchemy.exc import IntegrityError
 from psycopg2 import errorcodes
@@ -9,18 +10,6 @@ import functools
 
 user_bp = Blueprint('users', __name__, url_prefix='/users')
 
-def auth_as_admin(fn):
-    @functools.wraps(fn)
-    def wrapper(*args, **kwargs):
-        user_id = get_jwt_identity()
-        stmt = db.select(User).filter_by(id=user_id)
-        user = db.session.scalar(stmt)
-        if user.is_admin:
-            return fn(*args, **kwargs)
-        else:
-            return {'error': 'Not authorised to peform this delete'}, 403
-    return wrapper
-        
 @user_bp.route('/', methods=["GET"])
 def get_all_users():
     stmt = db.select(User).order_by(User.id)
