@@ -13,7 +13,6 @@ class Review(db.Model):
 
     performance = db.relationship('Performance', back_populates='reviews', lazy='joined')
     user = db.relationship('User', back_populates='reviews')
-    comments = db.relationship('Comment', back_populates='reviews')
 
 class ReviewSchema(ma.Schema):
     performance = fields.Nested('PerformanceSchema', only=['title'])

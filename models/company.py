@@ -6,7 +6,7 @@ class Company(db.Model):
 
     id  = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
-    location = db.Column(db.String)
+    location = db.Column(db.String, default='nomadic')
     artistic_director = db.Column(db.String)
 
     # performances = db.relationship('Performance', back_populates='company.name', cascade='all, delete')

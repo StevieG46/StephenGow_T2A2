@@ -12,7 +12,6 @@ class User(db.Model):
     is_admin = db.Column(db.Boolean, default=False)
 
     reviews = db.relationship('Review', back_populates='user')
-    comments = db.relationship('Comment', back_populates='user')
 
 class UserSchema(ma.Schema):
     class Meta:

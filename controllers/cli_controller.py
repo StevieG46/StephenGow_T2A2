@@ -4,7 +4,6 @@ from models.user import User
 from models.company import Company
 from models.performance import Performance
 from models.review import Review
-from models.comment import Comment
 from datetime import date
 
 db_commands = Blueprint('db', __name__)

@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 from init import db, bcrypt, jwt
 from models.review import Review, review_schema, reviews_schema
 from models.performance import Performance
@@ -7,10 +7,9 @@ from .auth_controller import auth_as_admin
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from sqlalchemy.exc import IntegrityError
 from psycopg2 import errorcodes
-from datetime import timedelta
+from datetime import timedelta, datetime
 import functools
 
-# Create a Blueprint for reviews
 review_bp = Blueprint('review', __name__, url_prefix='/reviews')
 
 @review_bp.route('/', methods=["GET"])
@@ -29,18 +28,39 @@ def get_one_review(id):
 @review_bp.route('/', methods=["POST"])
 @jwt_required()
 def create_review():
-    body_data = request.get_json()
-    review = Review(
-        # date=body_data.get('date'),
-        review=body_data.get('review'),
-        rating=body_data.get('rating'),
-        performance_id=body_data.get('performance_id'),
-        user_id=body_data.get('user_id')
-    )
-    db.session.add(review)
-    db.session.commit()
+    try:
+        body_data = request.get_json()
+        if not body_data or 'review' not in body_data or 'rating' not in body_data or 'performance_id' not in body_data:
+            return {'error': 'Missing required fields (review, rating, performance_id)'}, 400
 
-    return review_schema.dump(review), 201
+        review_text = body_data.get('review')
+        rating = body_data.get('rating')
+        performance_id = body_data.get('performance_id')
+
+        if not isinstance(rating, int) or rating < 1 or rating > 5:
+            return {'error': 'Invalid rating. Rating must be an integer between 1 and 5.'}, 400
+
+        user_id = get_jwt_identity()
+        current_date = datetime.utcnow().date()
+
+        review = Review(
+            date=current_date,
+            review=review_text,
+            rating=rating,
+            performance_id=performance_id,
+            user_id=user_id
+        )
+        db.session.add(review)
+        db.session.commit()
+
+        return review_schema.dump(review), 201
+
+    except IntegrityError:
+        db.session.rollback()
+        return {'error': 'Database error occurred. Please try again later.'}, 500
+
+    except Exception as e:
+        return {'error': str(e)}, 500
 
 @review_bp.route('/<int:id>', methods=["PATCH"])
 @jwt_required()
