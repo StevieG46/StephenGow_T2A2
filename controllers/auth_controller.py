@@ -21,6 +21,7 @@ def auth_as_admin(fn):
             return {'error': 'Not authorised to peform this delete'}, 403
     return wrapper
 
+# Creates new user, fields required- username, password & email.
 @auth_bp.route('/register', methods=["POST"])
 def auth_register():
     try:
@@ -42,6 +43,7 @@ def auth_register():
         if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
             return {'error': f'The{err.orig.diag.column_name} is required'},409
 
+# Login to create user token, fields required - email & password.
 @auth_bp.route('/login', methods=["POST"])
 def auth_login():
     body_data = request.get_json()

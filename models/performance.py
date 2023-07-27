@@ -8,13 +8,11 @@ class Performance(db.Model):
     company_id = db.Column(db.Integer, db.ForeignKey('companies.id'))
     title = db.Column(db.String(100), nullable=False)
     date = db.Column(db.Date)
-    artform = db.Column(db.String) # should i make this another table?
+    artform = db.Column(db.String) 
 
-    # company = db.relationship('Company', back_populates='performances')
     reviews = db.relationship('Review', back_populates='performance', cascade='all, delete')
 
 class PerformanceSchema(ma.Schema):
-    # company = fields.Nested('CompanySchema', only=['id'])
     reviews = fields.Nested('ReviewSchema', only=['review', 'rating'])
     
     class Meta:

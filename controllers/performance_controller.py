@@ -14,11 +14,13 @@ import functools
 
 performance_bp = Blueprint('performances', __name__, url_prefix='/performances')
 
+# Gets all performances, access open to all.
 @performance_bp.route('/', methods=["GET"])
 def get_all_performances():
     performances = Performance.query.all()
     return performances_schema.dump(performances)
 
+# Gets single performance by id, access open to all.
 @performance_bp.route('/<int:id>', methods=["GET"])
 def get_one_performance(id):
     performance = Performance.query.get(id)
@@ -30,22 +32,8 @@ def get_one_performance(id):
     else:
         return {'error': f'Performance not found with id {id}'}
 
-# @performance_bp.route('/', methods=["POST"])
-# @jwt_required()
-# @auth_as_admin
-# def create_performance():
-#     body_data = performance_schema.load(request.get_json())
-#     performance = Performance(
-#         company_id=body_data.get('company_id'),
-#         title=body_data.get('title'),
-#         date=body_data.get('date'),
-#         artform=body_data.get('artform')
-#     )
-#     db.session.add(performance)
-#     db.session.commit()
-
-#     return performance_schema.dump(performance), 201
-
+# Creates performance - Admin token required.
+# Fields required, company_id, title, date, artform.
 @performance_bp.route('/', methods=["POST"])
 @jwt_required()
 @auth_as_admin
@@ -92,6 +80,8 @@ def create_performance():
     except Exception as e:
         return {'error': str(e)}, 500
     
+# Edits single performance, admin token required.
+# Fields required, one or more,  company_id, title, date, artform.
 @performance_bp.route('/<int:id>', methods=["PATCH"])
 @jwt_required()
 @auth_as_admin
@@ -129,6 +119,8 @@ def update_performance(id):
     except Exception as e:
         return {'error': str(e)}, 500
 
+
+# Deletes performance by id, admin token required.
 @performance_bp.route('/<int:id>', methods=["DELETE"])
 @jwt_required()
 @auth_as_admin

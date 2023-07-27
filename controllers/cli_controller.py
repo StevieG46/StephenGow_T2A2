@@ -8,6 +8,10 @@ from datetime import date
 
 db_commands = Blueprint('db', __name__)
 
+# T0 create tables. use - flask db create
+# To seed tables. use - flask db seed
+# To drop tables. use - flask db drop
+
 @db_commands.cli.command('create')
 def create_db():
     db.create_all()
@@ -53,37 +57,30 @@ def seed_db():
     ]
     db.session.add_all(companies)
     
-    # performances = [
-    #     Performance (
-    #         company_id=(companies[1]),
-    #         title='Lucie in the Sky',
-    #         date=16/7/2023,
-    #         artform='Dance'
-    #     )
-    # ]
-    # db.session.add_all(performances)
+    db.session.commit()
 
-    # reviews = [
-    #     Review (
-    #         date=date.today(),
-    #         review='A great performance with integrated used of drones and dancers',
-    #         rating=4,
-    #         performance_id=performances[0],
-    #         user_id=users[1]
-    #     )
+    performances = [
+        Performance (
+            company_id=(companies[1].id),
+            title='Lucie in the Sky',
+            date=date(2023, 7, 16),
+            artform='Dance'
+        )
+    ]
+    db.session.add_all(performances)
+    db.session.commit()
 
-    # ]
-    # db.session.add_all(reviews)
+    reviews = [
+        Review (
+            date=date.today(),
+            review='A great performance with integrated used of drones and dancers',
+            rating=4,
+            performance_id=(performances[0].id),
+            user_id=(users[1].id)
+        )
 
-    # comments = [
-    #     Comment (
-    #         comment='The review above is very accurate',
-    #         date=date.today(),
-    #         user_id=users[0],
-    #         review_id=reviews[0]
-    #     )
-    # ]
-    # db.session.add_all(comments)
+    ]
+    db.session.add_all(reviews)
 
     db.session.commit()
 

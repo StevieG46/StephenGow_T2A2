@@ -12,12 +12,14 @@ import functools
 
 company_bp = Blueprint('companies', __name__, url_prefix='/companies')
  
+#  Gets all companies, access open to all.
 @company_bp.route('/', methods=["GET"])
 def get_all_companies():
     stmt = db.select(Company).order_by(Company.id)
     companies = db.session.scalars(stmt)
     return company_schema.dump(companies)
 
+#  Gets single company by id, access open to all.
 @company_bp.route('/<int:id>', methods=["GET"])
 def get_one_company(id):
         stmt = db.select(Company).filter_by(id=id)
@@ -27,6 +29,8 @@ def get_one_company(id):
         else:
              return{'error': f'User not found with id {id}'}
 
+# Creates new company, Admin Token required. 
+# Fields required, name, location & artistic_director.
 @company_bp.route('/', methods=["POST"])
 @jwt_required()
 @auth_as_admin
@@ -61,6 +65,8 @@ def create_company():
     except Exception as e:
         return {'error': str(e)}, 500
 
+# Edits company by id, Admin Token required. 
+# Fields required, one or more, name, location & artistic_director.
 @company_bp.route('/<int:id>', methods=["PATCH"])
 @jwt_required()
 @auth_as_admin
@@ -90,6 +96,8 @@ def update_company(id):
     except Exception as e:
         return {'error': str(e)}, 500
 
+# Deletes Company by id, Admin Token required. 
+# Fields required, name, location & artistic_director.
 @company_bp.route('/<int:id>', methods=["DELETE"])
 @jwt_required()
 @auth_as_admin

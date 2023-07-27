@@ -10,12 +10,14 @@ import functools
 
 user_bp = Blueprint('users', __name__, url_prefix='/users')
 
+# Gets all users, access open to all including non users.
 @user_bp.route('/', methods=["GET"])
 def get_all_users():
     stmt = db.select(User).order_by(User.id)
     users = db.session.scalars(stmt)
     return user_schema.dump(users)
 
+# Gets indiviudal user by id, access to all including non users.
 @user_bp.route('/<int:id>', methods=["GET"])
 def get_one_user(id):
         stmt = db.select(User).filter_by(id=id)
@@ -25,6 +27,7 @@ def get_one_user(id):
         else:
              return{'error': f'User not found with id {id}'}
 
+# Deletes user by id, Access only by admin, token required.
 @user_bp.route('/<int:id>', methods=["DELETE"])
 @jwt_required()
 @auth_as_admin

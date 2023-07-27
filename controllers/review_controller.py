@@ -11,12 +11,13 @@ from datetime import timedelta, datetime
 import functools
 
 review_bp = Blueprint('review', __name__, url_prefix='/reviews')
-
+# Gets all reviews, access open to all.
 @review_bp.route('/', methods=["GET"])
 def get_all_reviews():
     reviews = Review.query.all()
     return reviews_schema.dump(reviews)
 
+# Gets single review by id, access open to all.
 @review_bp.route('/<int:id>', methods=["GET"])
 def get_one_review(id):
     review = Review.query.get(id)
@@ -25,6 +26,8 @@ def get_one_review(id):
     else:
         return {'error': f'Review not found with id {id}'}
 
+# Creates new review, User or Admin token required.
+# Fields required, date, review, rating(0-5), performance_id.
 @review_bp.route('/', methods=["POST"])
 @jwt_required()
 def create_review():
@@ -62,24 +65,20 @@ def create_review():
     except Exception as e:
         return {'error': str(e)}, 500
 
+# Edit review by ID, must be own users review, token required.
+# Fields required, one or more, date, review, rating(0-5), performance_id.
 @review_bp.route('/<int:id>', methods=["PATCH"])
 @jwt_required()
 def update_review(id):
-    # Get the authenticated user's ID from the JWT token
     current_user_id = get_jwt_identity()
-
-    # Get the review from the database
     review = Review.query.get(id)
 
-    # Check if the review exists
     if not review:
         return {'error': f'Review with id {id} not found'}, 404
 
-    # Check if the authenticated user is the owner of the review
     if review.user_id != current_user_id:
         return {'error': 'You are not authorized to update this review'}, 403
 
-    # Update the review if the user is authorized
     body_data = request.get_json()
     review.date = body_data.get('date', review.date)
     review.review = body_data.get('review', review.review)
@@ -88,6 +87,7 @@ def update_review(id):
 
     return review_schema.dump(review)
 
+# Deletes review by id, Admin token required.
 @review_bp.route('/<int:id>', methods=["DELETE"])
 @jwt_required()
 @auth_as_admin
